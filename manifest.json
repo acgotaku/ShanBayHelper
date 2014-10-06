@@ -4,7 +4,7 @@
       "persistent": false
    },
    "content_scripts": [ {
-      "js": [ "js/shanbay.js" ],
+      "js": [ "js/jquery-2.1.1.min.js","js/shanbay.js" ],
       "matches": [ "http://*/*", "https://*/*" ]
    } ],
    "default_locale": "en",
