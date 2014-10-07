@@ -1,10 +1,11 @@
 {
    "background": {
-      "scripts": ["background.js"],
+      "scripts": ["js/jquery-2.1.1.min.js","background.js"],
       "persistent": false
    },
    "content_scripts": [ {
-      "js": [ "js/jquery-2.1.1.min.js","js/shanbay.js" ],
+      "js": [ "js/jquery-2.1.1.min.js","js/howler.min.js","js/shanbay.js" ],
+      "css": [ "css/shanbay.css" ],
       "matches": [ "http://*/*", "https://*/*" ]
    } ],
    "default_locale": "en",
