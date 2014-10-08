@@ -22,6 +22,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                             port.postMessage({data: localStorage});
                             break;
                         case 'lookup':
+                            getPageNum();
                             isUserSignedOn(function() {
                                 queryWord(request.data,port);
                             });
@@ -86,4 +87,29 @@ function queryWord(word,port){
        .fail(function(jqXHR, textStatus, errorThrown) {
             $("#send_test").html(textStatus + "\u9519\u8BEF\uFF0C\u70B9\u51FB\u91CD\u65B0\u6D4B\u8BD5");
         });
+}
+//Get All Words
+
+function getAllWord(){
+    var parameter = {'url': 'http://www.shanbay.com/bdc/learnings/library/master', 'dataType': 'html', type: 'GET'};
+    $.ajax(parameter)
+       .done(function(html, textStatus, jqXHR){
+           var vocabulary_ids=$("#vocabulary_ids", html).text().trim();
+           var vocab_ids=vocabulary_ids.substr(0,vocabulary_ids.length-1);
+           console.log(JSON.stringify(vocab_ids));
+       })
+       .fail(function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+        });
+}
+function getPageNum(){
+    var parameter = {'url': 'http://www.shanbay.com/bdc/learnings/library/master', 'dataType': 'html', type: 'GET'};
+    $.ajax(parameter)
+       .done(function(html, textStatus, jqXHR){
+            var num=$(".endless_page_link", html).eq($(".endless_page_link", html).length-2).text();
+            console.log(num);
+       })
+       .fail(function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+        });   
 }

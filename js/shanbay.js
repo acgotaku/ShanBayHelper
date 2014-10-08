@@ -9,6 +9,12 @@
                     console.info("selected "+text);
                     if (undefined != text && null!=text&&0<text.length){
                         console.log("searching "+text);
+                        self.popover({
+                            shanbay:{
+                                loading:true,
+                                msg:"查询中...."
+                            }
+                        })
                         var port = chrome.runtime.connect({name: "ShanBayHelper"});
                         port.postMessage({
                             method: 'lookup',
@@ -20,12 +26,7 @@
                                 self.popover(response);
                             }
                         });
-                        self.popover({
-                            shanbay:{
-                                loading:true,
-                                msg:"查询中...."
-                            }
-                        })
+
                     }
                 });
             },
