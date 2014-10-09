@@ -9,12 +9,12 @@
                     console.info("selected "+text);
                     if (undefined != text && null!=text&&0<text.length){
                         console.log("searching "+text);
-                        self.popover({
-                            shanbay:{
+                        self.popover(
+                            {
                                 loading:true,
                                 msg:"查询中...."
                             }
-                        })
+                        )
                         var port = chrome.runtime.connect({name: "ShanBayHelper"});
                         port.postMessage({
                             method: 'lookup',
@@ -32,6 +32,9 @@
             },
             popover:function(data){
                 var html = '<div id="shanbay_popover"><div class="popover-inner"><h3 class="popover-title">';
+                if(true == data.loading){
+                    html += '<p><span class="word">'+data.msg+'</span></p>';
+                }
                 if(data.status_code==0){
                     html += '<p><span class="word">'+data.data.content+'</span>'
                         +'<span class="pronunciation">'+(data.data.pron.length ? ' ['+data.data.pron+'] ': '')+'</span></p>'

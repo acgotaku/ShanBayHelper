@@ -24,7 +24,7 @@
           "default_title": "ShanBayHelper"      // optional; shown in tooltip
    },
    "manifest_version": 2,
-   "permissions": [ "cookies", "contextMenus", "activeTab", "tabs", "storage","notifications", "*://*/*"],
+   "permissions": [ "cookies", "contextMenus", "activeTab", "tabs", "unlimitedStorage","notifications", "*://*/*"],
    "name": "__MSG_appName__",
    "version": "0.0.1"
 }
