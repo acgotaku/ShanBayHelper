@@ -4,8 +4,8 @@
       "persistent": false
    },
    "content_scripts": [ {
-      "js": [ "js/jquery-2.1.1.min.js","js/howler.min.js","js/shanbay.js" ],
-      "css": [ "css/shanbay.css" ],
+      "js": [ "js/jquery-2.1.1.min.js","js/howler.min.js","js/shanbay.js"],
+      "css": [ "css/shanbay.css"],
       "matches": [ "http://*/*", "https://*/*" ]
    } ],
    "default_locale": "en",

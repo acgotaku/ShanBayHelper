@@ -22,8 +22,19 @@
                         });
                         port.onMessage.addListener(function(response) {
                             if(response){
+                                response=response.data;
                                 console.log(response);
-                                self.popover(response);
+                               // self.popover(response);
+                               var script = document.createElement('script');
+                               script.src = response[0];
+                               document.head.appendChild(script);
+                               var link = document.createElement('link');
+                               link.href = response[1];
+                               link.setAttribute('type', 'text/css');
+                               document.head.appendChild(link);
+                               link.href = response[2];
+                               link.setAttribute('type', 'text/css');
+                               document.head.appendChild(link);
                             }
                         });
 

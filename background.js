@@ -23,9 +23,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                             break;
                         case 'lookup':
                             // getPageNum();
-                            isUserSignedOn(function() {
-                                queryWord(request.data,port);
-                            });
+                            testReadability(port);
+                            // isUserSignedOn(function() {
+                            //     queryWord(request.data,port);
+                            // });
                             //port.postMessage({data:{tabid:sender.tab.id}})
                             break;
                         case 'addWord':
@@ -45,6 +46,13 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     }
 });
 
+function  testReadability(port){
+    var js_url = chrome.extension.getURL('js/readability.js');
+    var css1=chrome.extension.getURL('css/readability.css');
+    var css2=chrome.extension.getURL('css/readability-print.css');
+    port.postMessage({data:[js_url,css1,css2]});
+
+}
 //检查用户是否已经登录扇贝网
 function isUserSignedOn(callback) {
     chrome.cookies.get({"url": 'http://www.shanbay.com', "name": 'sessionid'}, function (cookie) {
