@@ -23,10 +23,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                             break;
                         case 'lookup':
                             // getPageNum();
-                            testReadability(port);
-                            // isUserSignedOn(function() {
-                            //     queryWord(request.data,port);
-                            // });
+                            //testReadability(port);
+                            isUserSignedOn(function() {
+                                queryWord(request.data,port);
+                            });
                             //port.postMessage({data:{tabid:sender.tab.id}})
                             break;
                         case 'addWord':
@@ -45,7 +45,32 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
     }
 });
-
+chrome.pageAction.onClicked.addListener(startShanBay());
+function startShanBay(){
+    var click =false;
+    return function(){
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {shanbay: click}, function(response) {
+                    console.log(response);  
+                });
+            });
+            click=!click;
+            var opt={
+                type: "basic",
+                title: "开始",
+                message: "启动扇贝单词助手",
+                iconUrl: "images/logo128.png"
+            }
+            if(!click){
+                opt.title="结束";
+                opt.message="扇贝单词助手休息了~";
+            }
+            var notification = chrome.notifications.create(click.toString(),opt,function(notifyId){return notifyId});
+            setTimeout(function(){
+                chrome.notifications.clear(click.toString(),function(){});
+            },5000);            
+    }
+}
 function  testReadability(port){
     var js_url = chrome.extension.getURL('js/readability.js');
     var css1=chrome.extension.getURL('css/readability.css');

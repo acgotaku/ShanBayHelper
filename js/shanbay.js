@@ -2,8 +2,22 @@
     var shanbay=function(){
 
         return{
-            startListener:function(){
+            init:function(){
                 var self=this;
+                chrome.runtime.onMessage.addListener(
+                    function(request, sender, sendResponse) {
+                            self.startListener(request.shanbay);
+                            console.log(request);
+                            sendResponse({shanbay: request});
+                        });
+            },
+            startListener:function(status){
+                var self=this;
+                console.log(status);
+                if(!status){
+                    $(document).unbind( "dblclick" );
+                    return ;
+                }
                 $(document).on('dblclick', function () {
                     var text = window.getSelection().toString().trim().match(/^[a-zA-Z\s']+$/)
                     console.info("selected "+text);
@@ -24,17 +38,17 @@
                             if(response){
                                 response=response.data;
                                 console.log(response);
-                               // self.popover(response);
-                               var script = document.createElement('script');
-                               script.src = response[0];
-                               document.head.appendChild(script);
-                               var link = document.createElement('link');
-                               link.href = response[1];
-                               link.setAttribute('type', 'text/css');
-                               document.head.appendChild(link);
-                               link.href = response[2];
-                               link.setAttribute('type', 'text/css');
-                               document.head.appendChild(link);
+                                self.popover(response);
+                               // var script = document.createElement('script');
+                               // script.src = response[0];
+                               // document.head.appendChild(script);
+                               // var link = document.createElement('link');
+                               // link.href = response[1];
+                               // link.setAttribute('type', 'text/css');
+                               // document.head.appendChild(link);
+                               // link.href = response[2];
+                               // link.setAttribute('type', 'text/css');
+                               // document.head.appendChild(link);
                             }
                         });
 
@@ -46,12 +60,12 @@
                 if(true == data.loading){
                     html += '<p><span class="word">'+data.msg+'</span></p>';
                 }
-                if(data.status_code==0){
-                    html += '<p><span class="word">'+data.data.content+'</span>'
-                        +'<span class="pronunciation">'+(data.data.pron.length ? ' ['+data.data.pron+'] ': '')+'</span></p>'
+                if(data.id != undefined){
+                    html += '<p><span class="word">'+data.content+'</span>'
+                        +'<span class="pronunciation">'+(data.pron.length ? ' ['+data.pron+'] ': '')+'</span></p>'
                         +'<a href="#" class="speak uk">UK<i class="icon icon-speak"></i></a><a href="#" class="speak us">US<i class="icon icon-speak"></i></a></h3>'
                         +'<div class="popover-content">'
-                        +'<p>'+data.data.definition.split('\n').join("<br/>")+'</p>'
+                        +'<p>'+data.definition.split('\n').join("<br/>")+'</p>'
                         +'</div>';
                 }
 
@@ -65,13 +79,13 @@
 
                 $('#shanbay_popover .speak.us').click(function(e) {
                     e.preventDefault();
-                    var audio_url = 'http://media.shanbay.com/audio/us/' + data.data.content + '.mp3';
+                    var audio_url = 'http://media.shanbay.com/audio/us/' + data.content + '.mp3';
                     playAudio(audio_url);
                 });
 
                 $('#shanbay_popover .speak.uk').click(function(e) {
                     e.preventDefault();
-                    var audio_url = 'http://media.shanbay.com/audio/uk/' + data.data.content + '.mp3';
+                    var audio_url = 'http://media.shanbay.com/audio/uk/' + data.content + '.mp3';
                     playAudio(audio_url);
                 });
 
@@ -127,5 +141,5 @@
 
         }
     }();
-   shanbay.startListener();
+   shanbay.init();
 }(jQuery));
