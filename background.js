@@ -114,8 +114,12 @@ function queryWord(word,port){
     var parameter = {'url': API+word, 'dataType': 'json', type: 'GET'};
     $.ajax(parameter)
        .done(function(json, textStatus, jqXHR){
-            console.log(json);
-            port.postMessage(json);
+            var data={
+                "method":"word",
+                "data":json
+            };
+            console.log(data);
+            port.postMessage(data);
        })
        .fail(function(jqXHR, textStatus, errorThrown) {
             console.log(textStatus);

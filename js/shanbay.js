@@ -36,9 +36,16 @@
                         });
                         port.onMessage.addListener(function(response) {
                             if(response){
-                                response=response.data;
                                 console.log(response);
-                                self.popover(response);
+                                switch(response.method){
+                                    case "word":
+                                        self.popover(response.data);
+                                        break;
+                                    case "setLocalStorage":
+                                        break;
+                                    default :
+                                        console.log(response);
+                                }
                                // var script = document.createElement('script');
                                // script.src = response[0];
                                // document.head.appendChild(script);
@@ -60,12 +67,12 @@
                 if(true == data.loading){
                     html += '<p><span class="word">'+data.msg+'</span></p>';
                 }
-                if(data.id != undefined){
-                    html += '<p><span class="word">'+data.content+'</span>'
-                        +'<span class="pronunciation">'+(data.pron.length ? ' ['+data.pron+'] ': '')+'</span></p>'
+                if(data.status_code==0){
+                    html += '<p><span class="word">'+data.data.content+'</span>'
+                        +'<span class="pronunciation">'+(data.data.pron.length ? ' ['+data.data.pron+'] ': '')+'</span></p>'
                         +'<a href="#" class="speak uk">UK<i class="icon icon-speak"></i></a><a href="#" class="speak us">US<i class="icon icon-speak"></i></a></h3>'
                         +'<div class="popover-content">'
-                        +'<p>'+data.definition.split('\n').join("<br/>")+'</p>'
+                        +'<p>'+data.data.definition.split('\n').join("<br/>")+'</p>'
                         +'</div>';
                 }
 
@@ -79,13 +86,13 @@
 
                 $('#shanbay_popover .speak.us').click(function(e) {
                     e.preventDefault();
-                    var audio_url = 'http://media.shanbay.com/audio/us/' + data.content + '.mp3';
+                    var audio_url = 'http://media.shanbay.com/audio/us/' + data.data.content + '.mp3';
                     playAudio(audio_url);
                 });
 
                 $('#shanbay_popover .speak.uk').click(function(e) {
                     e.preventDefault();
-                    var audio_url = 'http://media.shanbay.com/audio/uk/' + data.content + '.mp3';
+                    var audio_url = 'http://media.shanbay.com/audio/uk/' + data.data.content + '.mp3';
                     playAudio(audio_url);
                 });
 
