@@ -1,16 +1,8 @@
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    if (changeInfo.status === 'loading') {
-        chrome.pageAction.show(tabId);
+    if (changeInfo.status === 'loading') {  
         if (!chrome.runtime.onConnect.hasListeners()) {            
             chrome.runtime.onConnect.addListener(function(port) {
                 console.assert(port.name == "ShanBayHelper");
-                // chrome.pageAction.onClicked.addListener(function(){
-                //     port.postMessage({
-                //         method: 'toggle',
-                //         data: 'click'
-                //     });
-                //     console.log("Hello");
-                // });
                 port.onMessage.addListener(function(request) {
                     console.log(request);
                     switch(request.method){
@@ -29,8 +21,11 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                             });
                             //port.postMessage({data:{tabid:sender.tab.id}})
                             break;
-                        case 'addWord':
-                            addNewWordInBrgd(request.data,sendResponse);
+                        case 'setAction':
+                            if(request.show==true){
+                                console.log(port);
+                                chrome.pageAction.show(port.sender.tab.id);
+                            }
                             break;
                         case 'openSettings':
                             chrome.tabs.create({url: chrome.runtime.getURL("options.html")+'#'+request.anchor});

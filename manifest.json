@@ -4,7 +4,7 @@
       "persistent": false
    },
    "content_scripts": [ {
-      "js": [ "js/jquery-2.1.1.min.js","js/howler.min.js","js/shanbay.js"],
+      "js": [ "js/jquery-2.1.1.min.js","js/howler.min.js","js/shanbay.js","js/readability.js"],
       "css": [ "css/shanbay.css"],
       "matches": [ "http://*/*", "https://*/*" ]
    } ],

@@ -21,6 +21,7 @@ embed, object {
 }
 
 #readFooter {
+    display: none !important;
 	font-size: .85em;
 	text-align: left !important;
 }

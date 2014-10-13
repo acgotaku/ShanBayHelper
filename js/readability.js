@@ -1,6 +1,6 @@
 /*jslint undef: true, nomen: true, eqeqeq: true, plusplus: true, newcap: true, immed: true, browser: true, devel: true, passfail: false */
 /*global window: false, readConvertLinksToFootnotes: false, readStyle: false, readSize: false, readMargin: false, Typekit: false, ActiveXObject: false */
-
+readConvertLinksToFootnotes=false;readStyle='style';readSize='size';readMargin='margin';
 var dbg = /*(typeof console !== 'undefined') ? function(s) {
     console.log("Readability: " + s);
 } :*/ function() {};
@@ -712,7 +712,7 @@ var readability = {
         var stripUnlikelyCandidates = readability.flagIsActive(readability.FLAG_STRIP_UNLIKELYS),
             isPaging = (page !== null) ? true: false;
 
-        page = page ? page : document.body;
+        page = page ? page : document.body.cloneNode(true);
 
         var pageCacheHtml = page.innerHTML;
 
@@ -1822,4 +1822,13 @@ var readability = {
     
 };
 
-readability.init();
+//readability.init();
+if((window.location.protocol + "//" + window.location.host + "/") !== window.location.href){
+    var port = chrome.runtime.connect({name: "ShanBayHelper"});
+    if(readability.grabArticle()){
+            port.postMessage({
+            method: 'setAction',
+            show: true
+        });
+    }
+}
