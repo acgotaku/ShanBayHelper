@@ -27,9 +27,20 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                                 chrome.pageAction.show(port.sender.tab.id);
                             }
                             break;
-                        case 'openSettings':
-                            chrome.tabs.create({url: chrome.runtime.getURL("options.html")+'#'+request.anchor});
-                            port.postMessage({data:{tabid:sender.tab.id}})
+                        case 'readArticle':
+                            var readerPageHTML=chrome.extension.getURL("reader.html")
+                            var parameter = {'url': readerPageHTML, 'dataType': 'html', type: 'GET'};
+                            $.ajax(parameter)
+                               .done(function(html, textStatus, jqXHR){
+                                    var data={
+                                        "method":"readArticle",
+                                        "data":html
+                                    };
+                                    port.postMessage(data);
+                               })
+                               .fail(function(jqXHR, textStatus, errorThrown) {
+                                    console.log(textStatus);
+                                });
                             break;
                         default :
                             port.postMessage({data:[]}); // snub them.

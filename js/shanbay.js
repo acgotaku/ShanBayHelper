@@ -13,6 +13,36 @@
             },
             startListener:function(status){
                 var self=this;
+                var port = chrome.runtime.connect({name: "ShanBayHelper"});
+                port.postMessage({
+                    method: 'readArticle',
+                    data: true
+                });
+                port.onMessage.addListener(function(response) {
+                    if(response){
+                        console.log(response);
+                        switch(response.method){
+                            case "word":
+                                self.popover(response.data);
+                                break;
+                            case "readArticle":
+                                self.readArticle(response.data);
+                                break;
+                            default :
+                                console.log(response);
+                        }
+                       // var script = document.createElement('script');
+                       // script.src = response[0];
+                       // document.head.appendChild(script);
+                       // var link = document.createElement('link');
+                       // link.href = response[1];
+                       // link.setAttribute('type', 'text/css');
+                       // document.head.appendChild(link);
+                       // link.href = response[2];
+                       // link.setAttribute('type', 'text/css');
+                       // document.head.appendChild(link);
+                    }
+                });
                 console.log(status);
                 if(!status){
                     $(document).unbind( "dblclick" );
@@ -29,34 +59,9 @@
                                 msg:"查询中...."
                             }
                         )
-                        var port = chrome.runtime.connect({name: "ShanBayHelper"});
                         port.postMessage({
                             method: 'lookup',
                             data: text[0]
-                        });
-                        port.onMessage.addListener(function(response) {
-                            if(response){
-                                console.log(response);
-                                switch(response.method){
-                                    case "word":
-                                        self.popover(response.data);
-                                        break;
-                                    case "setLocalStorage":
-                                        break;
-                                    default :
-                                        console.log(response);
-                                }
-                               // var script = document.createElement('script');
-                               // script.src = response[0];
-                               // document.head.appendChild(script);
-                               // var link = document.createElement('link');
-                               // link.href = response[1];
-                               // link.setAttribute('type', 'text/css');
-                               // document.head.appendChild(link);
-                               // link.href = response[2];
-                               // link.setAttribute('type', 'text/css');
-                               // document.head.appendChild(link);
-                            }
                         });
 
                     }
@@ -144,6 +149,64 @@
                         }).play();
                     }
                 }
+            },
+            readArticle:function(html){
+                var wrap = document.createElement("iframe");
+                wrap.style.cssText = cssUp({
+                    position: "fixed",
+                    left: "0",
+                    top: "0",
+                    right: "0",
+                    bottom: "0",
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                    "background-color": "rgba(0, 0, 0, 0.8 )",
+                    "z-index": "999998",
+                    cursor: "default",
+                    "float": "none",
+                    margin: "0px",
+                    padding: "0px",
+                    opacity: "1",
+                    "-webkit-transition": "opacity 0.4s"
+                }, true);
+                var content = document.createElement("iframe");
+                content.style.cssText = cssUp({
+                    position: "fixed",
+                    left: "0",
+                    top: "0",
+                    right: "0",
+                    bottom: "0",
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                    "background-color": "rgba(0, 0, 0, 0.0)",
+                    "z-index": "999999",
+                    color: "#000",
+                    cursor: "default",
+                    "float": "none",
+                    "letter-spacing": "normal",
+                    "line-height": "normal",
+                    "text-align": "left",
+                    "text-decoration": "none",
+                    "white-space": "normal",
+                    "word-spacing": "normal",
+                    margin: "0px",
+                    padding: "0px",
+                    direction: "ltr"
+                }, true);
+                document.body.appendChild(wrap);
+                document.body.appendChild(content);
+                var article = content.contentDocument;
+                article.open();
+                article.write(html);
+                article.close();
+                function cssUp(object, value) {
+                    var temp = "";
+                    for (key in object) temp += key + ": " + object[key] + (value ? " !important; " : "; ");
+                    return temp;
+                }
+
             }
 
         }
