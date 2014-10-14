@@ -1,29 +1,21 @@
 (function($){
     var shanbay=function(){
-
+        var port = chrome.runtime.connect({name: "ShanBayHelper"});
         return{
             init:function(){
                 var self=this;
-                chrome.runtime.onMessage.addListener(
-                    function(request, sender, sendResponse) {
-                            self.startListener(request.shanbay);
-                            console.log(request);
-                            sendResponse({shanbay: request});
-                        });
-            },
-            startListener:function(status){
-                var self=this;
-                var port = chrome.runtime.connect({name: "ShanBayHelper"});
-                port.postMessage({
-                    method: 'readArticle',
-                    data: true
-                });
                 port.onMessage.addListener(function(response) {
                     if(response){
                         console.log(response);
                         switch(response.method){
                             case "word":
-                                self.popover(response.data);
+                                var iframe=document.getElementById("shanbay_content");
+                                if(iframe){
+                                    self.popover(response.data,iframe.contentDocument);
+                                }else{
+                                    self.popover(response.data);
+                                }
+                                
                                 break;
                             case "readArticle":
                                 self.readArticle(response.data);
@@ -31,25 +23,27 @@
                             default :
                                 console.log(response);
                         }
-                       // var script = document.createElement('script');
-                       // script.src = response[0];
-                       // document.head.appendChild(script);
-                       // var link = document.createElement('link');
-                       // link.href = response[1];
-                       // link.setAttribute('type', 'text/css');
-                       // document.head.appendChild(link);
-                       // link.href = response[2];
-                       // link.setAttribute('type', 'text/css');
-                       // document.head.appendChild(link);
                     }
                 });
-                console.log(status);
+                chrome.runtime.onMessage.addListener(
+                    function(request, sender, sendResponse) {
+                            self.startListener(request.shanbay);
+                            // port.postMessage({
+                            //     method: 'readArticle',
+                            //     data: true
+                            // });
+                            sendResponse({shanbay: request});
+                        });
+            },
+            startListener:function(status,content){
+                var self=this;
+                content = content ? content : document;
                 if(!status){
-                    $(document).unbind( "dblclick" );
+                    $(content).unbind( "dblclick" );
                     return ;
                 }
-                $(document).on('dblclick', function () {
-                    var text = window.getSelection().toString().trim().match(/^[a-zA-Z\s']+$/)
+                $(content).on('dblclick', function () {
+                    var text = content.getSelection().toString().trim().match(/^[a-zA-Z\s']+$/)
                     console.info("selected "+text);
                     if (undefined != text && null!=text&&0<text.length){
                         console.log("searching "+text);
@@ -57,8 +51,8 @@
                             {
                                 loading:true,
                                 msg:"查询中...."
-                            }
-                        )
+                            },content
+                        );
                         port.postMessage({
                             method: 'lookup',
                             data: text[0]
@@ -67,7 +61,8 @@
                     }
                 });
             },
-            popover:function(data){
+            popover:function(data,content){
+                content = content ? content : document;
                 var html = '<div id="shanbay_popover"><div class="popover-inner"><h3 class="popover-title">';
                 if(true == data.loading){
                     html += '<p><span class="word">'+data.msg+'</span></p>';
@@ -82,43 +77,43 @@
                 }
 
                 html += '</div></div>'
-                $('#shanbay_popover').remove()
-                $('body').append(html);
+                $('#shanbay_popover',content).remove()
+                $(content.body).append(html);
 
                 getSelectionOffset(function(left, top) {
                     setPopoverPosition(left, top);
                 });
 
-                $('#shanbay_popover .speak.us').click(function(e) {
+                $('#shanbay_popover .speak.us',content).click(function(e) {
                     e.preventDefault();
                     var audio_url = 'http://media.shanbay.com/audio/us/' + data.data.content + '.mp3';
                     playAudio(audio_url);
                 });
 
-                $('#shanbay_popover .speak.uk').click(function(e) {
+                $('#shanbay_popover .speak.uk',content).click(function(e) {
                     e.preventDefault();
                     var audio_url = 'http://media.shanbay.com/audio/uk/' + data.data.content + '.mp3';
                     playAudio(audio_url);
                 });
 
-                $('html').click(function() {
-                  $('#shanbay_popover').remove();
+                $(content.body).click(function() {
+                  $('#shanbay_popover',content).remove();
                 });
-                $('body').on('click', '#shanbay_popover', function (e) {
-                  e.stopPropagation();
+                $('#shanbay_popover',content).click(function(e){
+                    e.stopPropagation();
                 });
                 function getSelectionOffset(callback) {
-                  var left = window.innerWidth/2;
-                  var top = window.innerHeight/2;
-                  var selection = window.getSelection();
+                  var left = content.innerWidth/2;
+                  var top = content.innerHeight/2;
+                  var selection = content.getSelection();
                   if(0<selection.rangeCount){
-                    var range = window.getSelection().getRangeAt(0);
-                    var dummy = document.createElement('span');
+                    var range = content.getSelection().getRangeAt(0);
+                    var dummy = content.createElement('span');
                     range.insertNode(dummy);
                     left = getLeft(dummy) - 50;
                     top = getTop(dummy) + 25;
                     dummy.remove();
-                    window.getSelection().addRange(range);
+                    content.getSelection().addRange(range);
                   }
                     console.log(left + ':' + top);
                     callback(left, top);
@@ -136,7 +131,7 @@
                 }
 
                 function setPopoverPosition(left, top) {
-                    $('#shanbay_popover').css({
+                    $('#shanbay_popover',content).css({
                         position: 'absolute',
                         left: left,
                         top: top
@@ -151,6 +146,7 @@
                 }
             },
             readArticle:function(html){
+                var self=this;
                 var wrap = document.createElement("iframe");
                 wrap.style.cssText = cssUp({
                     position: "fixed",
@@ -195,12 +191,27 @@
                     padding: "0px",
                     direction: "ltr"
                 }, true);
+                content.setAttribute("id","shanbay_content");
                 document.body.appendChild(wrap);
                 document.body.appendChild(content);
                 var article = content.contentDocument;
                 article.open();
                 article.write(html);
                 article.close();
+                article.getElementById("title").innerText=readability.getArticleTitle().innerHTML;
+                article.getElementsByClassName("content")[0].innerHTML=readability.grabArticle().innerHTML;
+                article.getElementById("article").onclick=function(e){
+                    var shanbay_popover=article.getElementById("shanbay_popover");
+                    if(shanbay_popover){
+                        shanbay_popover.remove();
+                    }
+                    e.stopPropagation();
+                };
+                article.body.onclick=function(){
+                    document.body.removeChild(wrap);
+                    document.body.removeChild(content);
+                };
+                self.startListener(true,article);
                 function cssUp(object, value) {
                     var temp = "";
                     for (key in object) temp += key + ": " + object[key] + (value ? " !important; " : "; ");
