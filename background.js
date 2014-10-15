@@ -14,11 +14,11 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                             port.postMessage({data: localStorage});
                             break;
                         case 'lookup':
-                            // getPageNum();
+                            getPageNum();
                             //testReadability(port);
-                            isUserSignedOn(function() {
-                                queryWord(request.data,port);
-                            });
+                            // isUserSignedOn(function() {
+                            //     queryWord(request.data,port);
+                            // });
                             //port.postMessage({data:{tabid:sender.tab.id}})
                             break;
                         case 'setAction':
@@ -173,12 +173,12 @@ function getAllWord(num){
         });
 }
 function saveAllWord(words){
-    var vocabularys=[];
+    var vocabularys={};
     for(var i=0;i<words.length;i++){
         var word=words[i].data;
         for(var j=0;j<word.length;j++){
             var vocabulary=word[j].content;
-            vocabularys.push(vocabulary);
+            vocabularys[vocabulary]=vocabulary;
         }
     }
     localStorage.setItem("learned",JSON.stringify(vocabularys));

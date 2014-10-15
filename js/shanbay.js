@@ -27,11 +27,11 @@
                 });
                 chrome.runtime.onMessage.addListener(
                     function(request, sender, sendResponse) {
-                            self.startListener(request.shanbay);
-                            // port.postMessage({
-                            //     method: 'readArticle',
-                            //     data: true
-                            // });
+                           // self.startListener(request.shanbay);
+                            port.postMessage({
+                                method: 'readArticle',
+                                data: true
+                            });
                             sendResponse({shanbay: request});
                         });
             },
@@ -115,6 +115,11 @@
                     dummy.remove();
                     content.getSelection().addRange(range);
                   }
+                    console.log(left + ':' + top);
+                    var article=content.getElementById("articleContainer");
+                    if(article){
+                        top=top-article.scrollTop;
+                    }
                     console.log(left + ':' + top);
                     callback(left, top);
                 }
