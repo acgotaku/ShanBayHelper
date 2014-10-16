@@ -178,7 +178,7 @@ function saveAllWord(words){
         var word=words[i].data;
         for(var j=0;j<word.length;j++){
             var vocabulary=word[j].content;
-            vocabularys[vocabulary]=vocabulary;
+            vocabularys[vocabulary]=1;
         }
     }
     localStorage.setItem("learned",JSON.stringify(vocabularys));
