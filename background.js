@@ -6,15 +6,20 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                 port.onMessage.addListener(function(request) {
                     console.log(request);
                     switch(request.method){
-                        case "getLocalStorage":
-                            port.postMessage({data: localStorage});
-                            break;
-                        case "setLocalStorage":
-                            window.localStorage=request.data;
-                            port.postMessage({data: localStorage});
+                        case "getWords":
+                            var date=new Date().getTime();
+                            if(date - localStorage.getItem("update") >= 86400000){
+                                getPageNum();
+                            }else{
+                                var data={
+                                    "method":"getWords",
+                                    "data":localStorage.getItem("learned")
+                                }; 
+                                port.postMessage(data);
+                            }
                             break;
                         case 'lookup':
-                            getPageNum();
+                            
                             //testReadability(port);
                             // isUserSignedOn(function() {
                             //     queryWord(request.data,port);
@@ -76,13 +81,6 @@ function startShanBay(){
                 chrome.notifications.clear(click.toString(),function(){});
             },5000);            
     }
-}
-function  testReadability(port){
-    var js_url = chrome.extension.getURL('js/readability.js');
-    var css1=chrome.extension.getURL('css/readability.css');
-    var css2=chrome.extension.getURL('css/readability-print.css');
-    port.postMessage({data:[js_url,css1,css2]});
-
 }
 //检查用户是否已经登录扇贝网
 function isUserSignedOn(callback) {
@@ -182,6 +180,12 @@ function saveAllWord(words){
         }
     }
     localStorage.setItem("learned",JSON.stringify(vocabularys));
+    localStorage.setItem("update",new Date().getTime());
+    var data={
+    "method":"getWords",
+    "data":JSON.stringify(vocabularys)
+    }; 
+    port.postMessage(data);
 }
 function getPageNum(){
     var parameter = {'url': 'http://www.shanbay.com/bdc/learnings/library/master', 'dataType': 'html', type: 'GET'};

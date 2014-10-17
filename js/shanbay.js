@@ -20,6 +20,9 @@
                             case "readArticle":
                                 self.readArticle(response.data);
                                 break;
+                            case "getWords":
+                                self.parseArticle(response.data);
+                                break;
                             default :
                                 console.log(response);
                         }
@@ -27,7 +30,6 @@
                 });
                 chrome.runtime.onMessage.addListener(
                     function(request, sender, sendResponse) {
-                           // self.startListener(request.shanbay);
                             port.postMessage({
                                 method: 'readArticle',
                                 data: true
@@ -43,7 +45,7 @@
                     return ;
                 }
                 $(content).on('dblclick', function () {
-                    var text = content.getSelection().toString().trim().match(/^[a-zA-Z\s']+$/)
+                    var text = content.getSelection().toString().trim().match(/^[a-zA-Z\s']+$/);
                     console.info("selected "+text);
                     if (undefined != text && null!=text&&0<text.length){
                         console.log("searching "+text);
@@ -217,12 +219,55 @@
                     document.body.removeChild(content);
                 };
                 self.startListener(true,article);
+                port.postMessage({
+                    method: 'getWords',
+                    data: null
+                });
                 function cssUp(object, value) {
                     var temp = "";
                     for (key in object) temp += key + ": " + object[key] + (value ? " !important; " : "; ");
                     return temp;
                 }
 
+            },
+            parseArticle:function(words){
+                var words=JSON.parse(words);
+                var iframe=document.getElementById("shanbay_content");
+                var article = iframe.contentDocument;
+                var content=readability.grabArticle();
+                var html=content.innerHTML;
+                var SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+                html=html.replace(SCRIPT_REGEX,"");
+                html=html.replace(/<!--.*?-->/g, "");
+                content.innerHTML=html;
+                text=html.replace(/(<([^>]+)>)/ig,"");       
+                text=text.replace(/[\.,-\/#!$%\^&\*’”;:{}=\-_`~()]/g,"");
+                var texts=text.split(" ");
+                var object={};
+                for(var i=0;i<texts.length;i++){
+                    var single=texts[i].toString().trim().match(/^[a-zA-Z\s']+$/);
+                    if(single){
+                        object[single]=1;
+                    }    
+                }
+                console.log("replace");
+                var arrays=Object.keys(object);
+                var children = content.firstChild.firstChild.children;
+                for(var i=0;i<arrays.length;i++){
+                    var single=arrays[i].toLowerCase();
+                    if(words.hasOwnProperty(single)){
+                        var find = new RegExp('\\b'+arrays[i]+'\\b','g');
+                        console.log(arrays[i]);
+                        for(var j=0; j<children.length; j++) {
+                            if(children[j].innerHTML.indexOf(arrays[i]) > -1){
+                                children[j].innerHTML=children[j].innerText.replace(find,'<span class="learned">'+ arrays[i] +'</span>');
+                                console.log(children[j]);
+                            }
+                        }
+                    }
+                }
+                console.log(content.innerHTML);
+               article.getElementsByClassName("content")[0].innerHTML=content.innerHTML;
             }
 
         }
