@@ -21,9 +21,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                         case 'lookup':
                             
                             //testReadability(port);
-                            // isUserSignedOn(function() {
-                            //     queryWord(request.data,port);
-                            // });
+                            isUserSignedOn(function() {
+                                queryWord(request.data,port);
+                            });
                             //port.postMessage({data:{tabid:sender.tab.id}})
                             break;
                         case 'setAction':

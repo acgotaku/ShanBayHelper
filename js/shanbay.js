@@ -253,18 +253,29 @@
                 console.log("replace");
                 var arrays=Object.keys(object);
                 var children = content.firstChild.firstChild.children;
+                var place_text=[];
+                for(var j=0; j<children.length; j++) {
+                    place_text.push(children[j].innerText);
+                }
                 for(var i=0;i<arrays.length;i++){
                     var single=arrays[i].toLowerCase();
                     if(words.hasOwnProperty(single)){
                         var find = new RegExp('\\b'+arrays[i]+'\\b','g');
                         console.log(arrays[i]);
-                        for(var j=0; j<children.length; j++) {
-                            if(children[j].innerHTML.indexOf(arrays[i]) > -1){
-                                children[j].innerHTML=children[j].innerText.replace(find,'<span class="learned">'+ arrays[i] +'</span>');
-                                console.log(children[j]);
+                        for(var j=0; j<place_text.length; j++) {
+                            if(place_text[j].indexOf(arrays[i]) > -1){
+                                place_text[j]=place_text[j].replace(find,'<span class="learned">'+ arrays[i] +'</span>');
+                                console.log(place_text[j]);
                             }
                         }
                     }
+                    // if(i>13){
+                    //     article.getElementsByClassName("content")[0].innerHTML=content.innerHTML;
+                    //     return;
+                    // }
+                }
+                for(var j=0; j<children.length; j++) {
+                    children[j].innerHTML=place_text[j];
                 }
                 console.log(content.innerHTML);
                article.getElementsByClassName("content")[0].innerHTML=content.innerHTML;
