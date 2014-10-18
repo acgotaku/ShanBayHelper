@@ -21,7 +21,9 @@
                                 self.readArticle(response.data);
                                 break;
                             case "getWords":
-                                self.parseArticle(response.data);
+                                setTimeout(function(){
+                                    self.parseArticle(response.data);
+                                },2); 
                                 break;
                             default :
                                 console.log(response);
@@ -261,11 +263,11 @@
                     var single=arrays[i].toLowerCase();
                     if(words.hasOwnProperty(single)){
                         var find = new RegExp('\\b'+arrays[i]+'\\b','g');
-                        console.log(arrays[i]);
+                        //console.log(arrays[i]);
                         for(var j=0; j<place_text.length; j++) {
                             if(place_text[j].indexOf(arrays[i]) > -1){
                                 place_text[j]=place_text[j].replace(find,'<span class="learned">'+ arrays[i] +'</span>');
-                                console.log(place_text[j]);
+                                //console.log(place_text[j]);
                             }
                         }
                     }
@@ -277,7 +279,7 @@
                 for(var j=0; j<children.length; j++) {
                     children[j].innerHTML=place_text[j];
                 }
-                console.log(content.innerHTML);
+               // console.log(content.innerHTML);
                article.getElementsByClassName("content")[0].innerHTML=content.innerHTML;
             }
 

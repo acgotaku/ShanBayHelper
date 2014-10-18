@@ -48,7 +48,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                                 });
                             break;
                         default :
-                            port.postMessage({data:[]}); // snub them.
+                            port.postMessage({data:[]}); 
                     }
                 });
             });
@@ -66,20 +66,20 @@ function startShanBay(){
                 });
             });
             click=!click;
-            var opt={
-                type: "basic",
-                title: "开始",
-                message: "启动扇贝单词助手",
-                iconUrl: "images/logo128.png"
-            }
-            if(!click){
-                opt.title="结束";
-                opt.message="扇贝单词助手休息了~";
-            }
-            var notification = chrome.notifications.create(click.toString(),opt,function(notifyId){return notifyId});
-            setTimeout(function(){
-                chrome.notifications.clear(click.toString(),function(){});
-            },5000);            
+            // var opt={
+            //     type: "basic",
+            //     title: "开始",
+            //     message: "启动扇贝单词助手",
+            //     iconUrl: "images/logo128.png"
+            // }
+            // if(!click){
+            //     opt.title="结束";
+            //     opt.message="扇贝单词助手休息了~";
+            // }
+            // var notification = chrome.notifications.create(click.toString(),opt,function(notifyId){return notifyId});
+            // setTimeout(function(){
+            //     chrome.notifications.clear(click.toString(),function(){});
+            // },5000);            
     }
 }
 //检查用户是否已经登录扇贝网
