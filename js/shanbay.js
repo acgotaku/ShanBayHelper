@@ -4,6 +4,7 @@
         return{
             init:function(){
                 var self=this;
+                self.startListener(true);
                 port.onMessage.addListener(function(response) {
                     if(response){
                         console.log(response);
@@ -15,7 +16,6 @@
                                 }else{
                                     self.popover(response.data);
                                 }
-                                
                                 break;
                             case "readArticle":
                                 self.readArticle(response.data);
@@ -223,7 +223,7 @@
                 self.startListener(true,article);
                 port.postMessage({
                     method: 'getWords',
-                    data: null
+                    data: "shanbay"
                 });
                 function cssUp(object, value) {
                     var temp = "";
