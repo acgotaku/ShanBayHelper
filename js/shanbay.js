@@ -155,6 +155,7 @@
                 }
             },
             readArticle:function(html){
+                console.log("readArticle");
                 var self=this;
                 var wrap = document.createElement("iframe");
                 wrap.style.cssText = cssUp({

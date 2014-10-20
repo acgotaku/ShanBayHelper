@@ -3,12 +3,13 @@ var background=function(){
         init:function(){
             var self=this;
             self.startListener();
-
         },
         startListener:function(){
             var self=this;
+            chrome.pageAction.onClicked.addListener(self.clickIcon());
             if (!chrome.runtime.onConnect.hasListeners()) {
                 chrome.runtime.onConnect.addListener(function(port) {
+                    console.log("Listener");
                     console.assert(port.name == "ShanBayHelper");
                     port.onMessage.addListener(function(request) {
                         console.log(request);
@@ -31,9 +32,7 @@ var background=function(){
                                 break;
                             case 'setAction':
                                 if(request.show==true){
-                                    console.log(port);
-                                    chrome.pageAction.show(port.sender.tab.id);
-                                    chrome.pageAction.onClicked.addListener(self.clickIcon(port));  
+                                    chrome.pageAction.show(port.sender.tab.id);  
                                 }
                                 break;
                             case 'readArticle':
