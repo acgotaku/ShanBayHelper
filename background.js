@@ -36,13 +36,20 @@ var background=function(){
                                 }
                                 break;
                             case 'readArticle':
-                                var readerPageHTML=chrome.extension.getURL("reader.html")
+                                var readerPageHTML=chrome.extension.getURL("reader.html");
+                                var readerCSS=chrome.extension.getURL("css/shanbay.css");
                                 var parameter = {'url': readerPageHTML, 'dataType': 'html', type: 'GET'};
                                 $.ajax(parameter)
                                    .done(function(html, textStatus, jqXHR){
+                                        var parser = new DOMParser();
+                                        // testdata=html;
+                                        html = parser.parseFromString(html, "text/xml");
+                                        var css=html.querySelector("link");
+                                        css.setAttribute("href", readerCSS)
+                                       
                                         var data={
                                             "method":"readArticle",
-                                            "data":html
+                                            "data":new XMLSerializer().serializeToString(html)
                                         };
                                         port.postMessage(data);
                                    })
