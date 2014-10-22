@@ -6,7 +6,6 @@ var background=function(){
         },
         startListener:function(){
             var self=this;
-            chrome.pageAction.onClicked.addListener(self.clickIcon());
             if (!chrome.runtime.onConnect.hasListeners()) {
                 chrome.runtime.onConnect.addListener(function(port) {
                     console.log("Listener");
