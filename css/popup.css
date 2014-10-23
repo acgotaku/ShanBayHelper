@@ -1,3 +1,23 @@
-#menu{
-	width: 160px;
+body{
+    color: #345;
+    font-size: 12px;
+}
+#menu .item{
+    height: 16px;
+    padding: 4px 25px;
+    margin: 0 2px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+#menu .item:hover{
+    padding: 3px 24px;
+    background-color: #ebebeb;
+    border: solid 1px #adadad;
+    border-radius: 3px;
+}
+#menu .separator {
+    height: 0;
+    margin: 3px 2px;
+    border: 0;
+    border-top: 1px solid #ddd;
 }

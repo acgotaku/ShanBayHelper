@@ -31,9 +31,8 @@ var background=function(){
                                 break;
                             case 'setAction':
                                 if(request.show==true){
-                                    chrome.pageAction.show(port.sender.tab.id);  
+                                    window.article=true;
                                 }
-                                break;
                             case 'readArticle':
                                 var readerPageHTML=chrome.extension.getURL("reader.html");
                                 var readerCSS=chrome.extension.getURL("css/shanbay.css");
@@ -62,6 +61,22 @@ var background=function(){
                     });
                 });
             }
+        },
+        showNotification:function(status){
+            var opt={
+                type: "basic",
+                title: "开始",
+                message: "启动扇贝单词助手",
+                iconUrl: "images/logo128.png"
+            }
+            if(!status){
+                opt.title="结束";
+                opt.message="扇贝单词助手休息了~";
+            }
+            var notification = chrome.notifications.create(status.toString(),opt,function(notifyId){return notifyId});
+            setTimeout(function(){
+                chrome.notifications.clear(status.toString(),function(){});
+            },5000);
         },
         isUserSignedOn:function(){
             chrome.cookies.get({"url": 'http://www.shanbay.com', "name": 'sessionid'}, function (cookie) {
@@ -105,20 +120,13 @@ var background=function(){
                     console.log(textStatus);
                 });
         },
-        clickIcon:function(){
-            var click =false;
-            return function(){
+        sendData:function(data){
+            console.log("sendData");
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                var data={
-                    "method":"clickIcon",
-                    "data":click
-                };
                 chrome.tabs.sendMessage(tabs[0].id, data, function(response) {
                     console.log(response);  
                 });
-            }); 
-            click=!click;
-            }
+            });
         },
         getWords:function(port){
             var parameter = {'url': 'http://www.shanbay.com/bdc/learnings/library/master', 'dataType': 'html', type: 'GET'};
