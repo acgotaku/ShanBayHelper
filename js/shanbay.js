@@ -23,6 +23,14 @@ var shanbay=function(){
                                 self.parseArticle(response.data);
                             },2); 
                             break;
+                        case "addWord":
+                            var iframe=document.getElementById("shanbay_content");
+                            if(iframe){
+                                self.addWord(response.data,iframe.contentDocument);
+                            }else{
+                                self.addWord(response.data);
+                            }
+                            break;
                         default :
                             console.log(response);
                     }
@@ -76,15 +84,32 @@ var shanbay=function(){
             var html = '<div id="shanbay_popover"><div class="popover-inner"><h3 class="popover-title">';
             if(true == data.loading){
                 html += '<p><span class="word">'+data.msg+'</span></p>';
+            }else{
+                if(data.status_code==0){
+                    if(data.data.learning_id != undefined){
+                        html += '<p><span class="word">'+data.data.content+'</span>'
+                            +'<span class="pronunciation">'+(data.data.pron.length ? ' ['+data.data.pron+'] ': '')+'</span></p>'
+                            +'<a href="#" class="speak uk">UK<i class="icon icon-speak"></i></a><a href="#" class="speak us">US<i class="icon icon-speak"></i></a></h3>'
+                            +'<div class="popover-content">'
+                            +'<p>'+data.data.definition.split('\n').join("<br/>")+'</p>'
+                            +'</div>';                  
+                    }else{
+                        html += '<p><span class="word">'+data.data.content+'</span>'
+                            +'<small class="pronunciation">'+(data.data.pron.length ? ' ['+data.data.pron+'] ': '')+'</small></p>'
+                            +'<a href="#" class="speak uk">UK<i class="icon icon-speak"></i></a><a href="#" class="speak us">US<i class="icon icon-speak"></i></a></h3>'
+                            +'<div class="popover-content">'
+                            +'<p>'+data.data.definition.split('\n').join("<br/>")+'</p>'
+                            +'<div class="add-btn"><a href="#" class="btn" id="shanbay-add-btn">添加生词</a>'
+                            +'<p class="success hide">成功添加！</p>'
+                            +'<a href="#" target="_blank" class="btn hide" id="shanbay-check-btn">查看</a></div>'
+                            +'</div>';
+                        }
+                }else{
+                    console.log(data);
+                    html += '未找到单词</h3></div>';
+                }                
             }
-            if(data.status_code==0){
-                html += '<p><span class="word">'+data.data.content+'</span>'
-                    +'<span class="pronunciation">'+(data.data.pron.length ? ' ['+data.data.pron+'] ': '')+'</span></p>'
-                    +'<a href="#" class="speak uk">UK<i class="icon icon-speak"></i></a><a href="#" class="speak us">US<i class="icon icon-speak"></i></a></h3>'
-                    +'<div class="popover-content">'
-                    +'<p>'+data.data.definition.split('\n').join("<br/>")+'</p>'
-                    +'</div>';
-            }
+
 
             html += '</div></div>'
             $('#shanbay_popover',content).remove()
@@ -93,7 +118,10 @@ var shanbay=function(){
             getSelectionOffset(function(left, top) {
                 setPopoverPosition(left, top);
             });
-
+            $('#shanbay-add-btn').click(function(e) {
+                e.preventDefault();
+                addNewWord(data.data.id);
+            });
             $('#shanbay_popover .speak.us',content).click(function(e) {
                 e.preventDefault();
                 var audio_url = 'http://media.shanbay.com/audio/us/' + data.data.content + '.mp3';
@@ -152,6 +180,13 @@ var shanbay=function(){
                     top: top
                 });
             }
+            function addNewWord(word_id) {
+                port.postMessage({
+                    method: 'addWord',
+                    data: word_id
+                });
+            }
+
             function playAudio(audio_url) {
                 if(audio_url) {
                     new Howl({
@@ -159,6 +194,22 @@ var shanbay=function(){
                     }).play();
                 }
             }
+        },
+        addWord:function(data,content){
+            content = content ? content : document;
+            console.log(data);
+            switch(data.msg){
+              case "SUCCESS":
+                  $('#shanbay-add-btn',content).addClass('hide');
+                  $('#shanbay_popover .success, #shanbay-check-btn',content).removeClass('hide');
+                  $('#shanbay-check-btn',content).attr('href', 'http://www.shanbay.com/review/learning/' + data.data.id);
+                    break;
+              case "ERROR":
+                $('#shanbay_popover .success',content).text('添加失败，请重试。').removeClass().addClass('failed');
+                break;
+              default:
+              console.log(data);
+            };
         },
         readArticle:function(html){
             console.log("readArticle");

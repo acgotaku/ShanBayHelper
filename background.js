@@ -33,6 +33,12 @@ var background=function(){
                                 if(request.show==true){
                                     window.article=true;
                                 }
+                                break;
+                            case 'addWord':
+                                if(request.data){
+                                    self.addNewWord(request.data,port);
+                                }
+                                break;
                             case 'readArticle':
                                 var readerPageHTML=chrome.extension.getURL("reader.html");
                                 var readerCSS=chrome.extension.getURL("css/shanbay.css");
@@ -111,6 +117,25 @@ var background=function(){
                .done(function(json, textStatus, jqXHR){
                     var data={
                         "method":"word",
+                        "data":json
+                    };
+                    console.log(data);
+                    port.postMessage(data);
+               })
+               .fail(function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                });
+        },
+        addNewWord:function(word_id,port){
+            var API='http://www.shanbay.com/api/v1/bdc/learning/';
+            var parameter = {'url': API, 'dataType': 'json', type: 'POST',contentType: "application/json; charset=utf-8",data:JSON.stringify({
+                content_type: "vocabulary",
+                id: word_id
+                })};
+            $.ajax(parameter)
+               .done(function(json, textStatus, jqXHR){
+                    var data={
+                        "method":"addWord",
                         "data":json
                     };
                     console.log(data);
