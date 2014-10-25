@@ -85,33 +85,38 @@ var background=function(){
             },5000);
         },
         isUserSignedOn:function(){
-            chrome.cookies.get({"url": 'http://www.shanbay.com', "name": 'sessionid'}, function (cookie) {
-                if (cookie) {
-                    localStorage.setItem('shanbay_cookies', JSON.stringify(cookie));
-                } else {
-                    localStorage.removeItem('shanbay_cookies');
-                    var url="http://www.shanbay.com/accounts/login/"
-                    var opt={
-                        type: "basic",
-                        title: "登陆",
-                        message: "登陆扇贝网后方可划词查义",
-                        iconUrl: "images/logo128.png"
+            return new Promise(function(resolve, reject){
+                chrome.cookies.get({"url": 'http://www.shanbay.com', "name": 'userid'}, function (cookie) {
+                    if (cookie) {
+                        localStorage.setItem('shanbay_cookies', JSON.stringify(cookie));
+                        resolve(cookie);
+                    } else {
+                        localStorage.removeItem('shanbay_cookies');
+                        var url="http://www.shanbay.com/accounts/login/"
+                        var opt={
+                            type: "basic",
+                            title: "登陆",
+                            message: "登陆扇贝网后方可划词查义",
+                            iconUrl: "images/logo128.png"
+                        }
+                        var notification = chrome.notifications.create(url,opt,function(notifyId){return notifyId});
+                        chrome.notifications.onClicked.addListener( function (notifyId) {
+                            chrome.notifications.clear(notifyId,function(){});
+                            chrome.tabs.create({
+                                url:url
+                            })
+                        });
+                        setTimeout(function(){
+                            chrome.notifications.clear(url,function(){});
+                        },5000);
+                        reject();
                     }
-                    var notification = chrome.notifications.create(url,opt,function(notifyId){return notifyId});
-                    chrome.notifications.onClicked.addListener( function (notifyId) {
-                        chrome.notifications.clear(notifyId,function(){});
-                        chrome.tabs.create({
-                            url:url
-                        })
-                    });
-                    setTimeout(function(){
-                        chrome.notifications.clear(url,function(){});
-                    },5000);
-                }
+                });                
             });
+
         },
         queryWord:function(word,port){
-            var API='https://api.shanbay.com/bdc/search/?word=';
+            var API='http://www.shanbay.com/api/v1/bdc/search/?word=';
             var parameter = {'url': API+word, 'dataType': 'json', type: 'GET'};
             $.ajax(parameter)
                .done(function(json, textStatus, jqXHR){
@@ -150,6 +155,30 @@ var background=function(){
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, data, function(response) {
                     console.log(response);  
+                });
+            });
+        },
+        openOptions:function(firstTime){
+            var url = "options.html";
+            if (firstTime)
+                url += "?firstTime=true";
+
+            var fullUrl = chrome.extension.getURL(url);
+            chrome.tabs.getAllInWindow(null, function (tabs) {
+                for (var i in tabs) { // check if Options page is open already
+                    if (tabs.hasOwnProperty(i)) {
+                        var tab = tabs[i];
+                        if (tab.url == fullUrl) {
+                            chrome.tabs.update(tab.id, { selected:true }); // select the tab
+                            return;
+                        }
+                    }
+                }
+                chrome.tabs.getSelected(null, function (tab) { // open a new tab next to currently selected tab
+                    chrome.tabs.create({
+                        url:url,
+                        index:tab.index + 1
+                    });
                 });
             });
         },

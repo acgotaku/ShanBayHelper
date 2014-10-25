@@ -5,7 +5,6 @@
             init:function(){
                 var self=this;
                 self.startListener();
-                console.log(extension.article);
                 if(!extension.article){
                      $("#readArticle").hide();
                 }
@@ -37,6 +36,10 @@
                     };
                     extension.background.sendData(data);  
                     extension.background.showNotification(false);                  
+                });
+                $("#options").on("click",function(){
+                    self.closePopup();   
+                    extension.background.openOptions();               
                 });
             },
             closePopup:function(){
