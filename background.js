@@ -6,67 +6,71 @@ var background=function(){
         },
         startListener:function(){
             var self=this;
-            if (!chrome.runtime.onConnect.hasListeners()) {
-                chrome.runtime.onConnect.addListener(function(port) {
-                    console.log("Listener");
-                    console.assert(port.name == "ShanBayHelper");
-                    port.onMessage.addListener(function(request) {
-                        console.log(request);
-                        switch(request.method){
-                            case "getWords":
-                                var date=new Date().getTime();
-                                if(date - localStorage.getItem("update") >= 86400000){
-                                    self.getWords(port);
-                                }else{
-                                    var data={
-                                        "method":"getWords",
-                                        "data":localStorage.getItem("learned")
-                                    }; 
-                                    port.postMessage(data);
+            chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+                if (changeInfo.status === 'loading') {  
+                    if (!chrome.runtime.onConnect.hasListeners()) {
+                        chrome.runtime.onConnect.addListener(function(port) {
+                            console.log("Listener");
+                            console.assert(port.name == "ShanBayHelper");
+                            port.onMessage.addListener(function(request) {
+                                console.log(request);
+                                switch(request.method){
+                                    case "getWords":
+                                        var date=new Date().getTime();
+                                        if(date - localStorage.getItem("update") >= 86400000){
+                                            self.getWords(port);
+                                        }else{
+                                            var data={
+                                                "method":"getWords",
+                                                "data":localStorage.getItem("learned")
+                                            }; 
+                                            port.postMessage(data);
+                                        }
+                                        break;
+                                    case 'lookup':
+                                        self.isUserSignedOn();
+                                        self.queryWord(request.data,port);
+                                        break;
+                                    case 'setAction':
+                                        if(request.show==true){
+                                            window.article=true;
+                                        }
+                                        break;
+                                    case 'addWord':
+                                        if(request.data){
+                                            self.addNewWord(request.data,port);
+                                        }
+                                        break;
+                                    case 'readArticle':
+                                        var readerPageHTML=chrome.extension.getURL("reader.html");
+                                        var readerCSS=chrome.extension.getURL("css/shanbay.css");
+                                        var parameter = {'url': readerPageHTML, 'dataType': 'html', type: 'GET'};
+                                        $.ajax(parameter)
+                                           .done(function(html, textStatus, jqXHR){
+                                                var parser = new DOMParser();
+                                                // testdata=html;
+                                                html = parser.parseFromString(html, "text/xml");
+                                                var css=html.querySelector("link");
+                                                css.setAttribute("href", readerCSS)
+                                               
+                                                var data={
+                                                    "method":"readArticle",
+                                                    "data":new XMLSerializer().serializeToString(html)
+                                                };
+                                                port.postMessage(data);
+                                           })
+                                           .fail(function(jqXHR, textStatus, errorThrown) {
+                                                console.log(textStatus);
+                                            });
+                                        break;
+                                    default :
+                                        port.postMessage({data:[]}); 
                                 }
-                                break;
-                            case 'lookup':
-                                self.isUserSignedOn();
-                                self.queryWord(request.data,port);
-                                break;
-                            case 'setAction':
-                                if(request.show==true){
-                                    window.article=true;
-                                }
-                                break;
-                            case 'addWord':
-                                if(request.data){
-                                    self.addNewWord(request.data,port);
-                                }
-                                break;
-                            case 'readArticle':
-                                var readerPageHTML=chrome.extension.getURL("reader.html");
-                                var readerCSS=chrome.extension.getURL("css/shanbay.css");
-                                var parameter = {'url': readerPageHTML, 'dataType': 'html', type: 'GET'};
-                                $.ajax(parameter)
-                                   .done(function(html, textStatus, jqXHR){
-                                        var parser = new DOMParser();
-                                        // testdata=html;
-                                        html = parser.parseFromString(html, "text/xml");
-                                        var css=html.querySelector("link");
-                                        css.setAttribute("href", readerCSS)
-                                       
-                                        var data={
-                                            "method":"readArticle",
-                                            "data":new XMLSerializer().serializeToString(html)
-                                        };
-                                        port.postMessage(data);
-                                   })
-                                   .fail(function(jqXHR, textStatus, errorThrown) {
-                                        console.log(textStatus);
-                                    });
-                                break;
-                            default :
-                                port.postMessage({data:[]}); 
-                        }
-                    });
-                });
-            }
+                            });
+                        });
+                    }
+                }
+            });
         },
         showNotification:function(status){
             var opt={
