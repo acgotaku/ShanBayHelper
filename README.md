@@ -11,3 +11,7 @@
 ##停止扇贝查词
 
 结束对页面的监听
+
+##Web Store商店安装链接
+
+https://chrome.google.com/webstore/detail/shanbayhelper/mbekldhkbpihlaogjpclihoobhoakcic
