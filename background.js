@@ -250,7 +250,9 @@ var background=function(){
                 "data":JSON.stringify(vocabularys)
                 }; 
                 console.log(data);
-                port.postMessage(data);
+                if(port){
+                    port.postMessage(data);
+                }
             }
         }
     }
