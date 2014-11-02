@@ -7,7 +7,7 @@ body{
     background: #ccc url(../images/bg-pattern.png);
 }
 .main{
-    width: 650px;
+    width: 700px;
     margin: 40px auto 80px auto;
     border: 1px solid #fff;
     -webkit-box-shadow: #404040 0 5px 10px;
