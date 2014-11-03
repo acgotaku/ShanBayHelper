@@ -31,11 +31,13 @@ var background=function(){
                                         self.isUserSignedOn();
                                         self.queryWord(request.data,port);
                                         break;
-                                    case 'setAction':
-                                        if(request.show==true){
-                                            window.article=true;
-                                        }
-                                        break;
+                                    // case 'setAction':
+                                    //     if(request.show==true){
+                                    //         self.article=true;
+                                    //     }else{
+                                    //         self.article=false;
+                                    //     }
+                                    //     break;
                                     case 'addWord':
                                         if(request.data){
                                             self.addNewWord(request.data,port);

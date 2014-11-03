@@ -5,9 +5,7 @@
             init:function(){
                 var self=this;
                 self.startListener();
-                if(!extension.article){
-                     $("#readArticle").hide();
-                }
+                self.sendData({method:"IsArticle"});
             },
             startListener:function(){
                 var self=this;
@@ -44,6 +42,21 @@
             },
             closePopup:function(){
                 window.close();
+            },
+            sendData:function(data){
+                console.log("IsArticle");
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, data, function(response) {
+                        console.log(response);
+                        switch(response.method){
+                            case "IsArticle":
+                                if(response.data==false){
+                                    $("#readArticle").hide();
+                                }
+                                break;
+                        } 
+                    });
+                });
             }
         }
     }();

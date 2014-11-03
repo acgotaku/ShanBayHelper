@@ -51,7 +51,7 @@ var shanbay=function(){
                             break;
                     }
                         // sendResponse({shanbay: request});
-                    });
+                });
         },
         startListener:function(status,content){
             var self=this;
