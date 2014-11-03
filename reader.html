@@ -1,8 +1,8 @@
 <!DOCTYPE html>
+<html>
 <head>
 	<title>ShanBayHelper</title>
-	<!--base href="chrome-extension://ehbhbcejonbhdmlgffbahnjldlobaffk/"-->
-	<link rel="stylesheet" href="chrome-extension://jmedhclbkmgniamjjoicngdcgabgkajk/css/shanbay.css" type="text/css">
+	<link rel="stylesheet" type="text/css"  />
 	<style type="text/css">
 		body {
 			margin: 0px;
@@ -18,7 +18,11 @@
 		html,body{
 			height: 100%;
 			width: 100%;
-		}	    
+		}	
+		.learned{
+			border-bottom: dashed 1px #209e85;
+			cursor: pointer;
+		}      
 	    h1 {
 	        font-size: 1.25em;
 	    }
@@ -141,7 +145,6 @@
             font-size: 0.9em;
             text-align: left;
         }
-
         .page.rtl table {
             text-align: right;
         }
@@ -201,7 +204,6 @@
 		.content a img {
 			border: none;
         }
-
         .content .float {
             margin: 8px 0;
             font-size: 70%;
@@ -213,12 +215,10 @@
 			text-align: right;
 			
 		}
-
         .content .float.left {
             float: left;
             margin-right: 20px;
         }
-
         .content .float.right {
             float: right;
             margin-left: 20px !important;
@@ -228,7 +228,6 @@
             float: none;
             display: block;
         }
-
 		.footer {
 			display: none;
 			direction: ltr;
@@ -240,7 +239,6 @@
         .page:last-of-type .footer {
 			?display: block;
         }
-
 		.footer table {
 			?border: solid 1px #ddd;
     		border-radius: 30px;
@@ -350,7 +348,6 @@
 			z-index: 100;
 			-webkit-transition: opacity 1.25s;
 		}
-
 		#controls.visible {
 			opacity: 1;
 			-webkit-transition: opacity 1s;
@@ -410,7 +407,6 @@
 		::-webkit-scrollbar-thumb:window-inactive {
 			background: rgba(255,0,0,0.4); 
 		}		
-
 		
 		@media print {
 			body {
@@ -476,8 +472,10 @@
 		<div id="article">	
 		<div class="page">
 			<div class="contentWrapper">
-				<h1 id="title"></h1>
-				<div class="content"></div>
+				<h1 id="title">
+				</h1>
+				<div class="content">
+				</div>
 			</div>
 		</div>
 		</div>
