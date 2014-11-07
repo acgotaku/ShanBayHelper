@@ -43,6 +43,29 @@ var background=function(){
                                             self.addNewWord(request.data,port);
                                         }
                                         break;
+                                    case 'getAudio':
+                                        if(request.data){
+                                            var oReq = new XMLHttpRequest();
+                                            oReq.open("GET", request.data, true);
+                                            oReq.responseType = "blob";
+                                            oReq.onload = function (oEvent) {
+                                                var blob = oReq.response;
+                                                var reader = new FileReader();
+                                                reader.onload = function(readerEvt) {
+                                                    var binaryString = readerEvt.target.result;
+                                                    var testdata=btoa(binaryString);
+                                                    var data={
+                                                        "method":"getAudio",
+                                                        "data":'data:audio/mp3;base64,'+btoa(binaryString)
+                                                    };
+                                                    port.postMessage(data);
+                                                };
+                                                reader.readAsBinaryString(blob);
+                                            };
+
+                                            oReq.send(null);                                          
+                                        }
+                                        break;
                                     case 'readArticle':
                                         var readerPageHTML=chrome.extension.getURL("reader.html");
                                         var readerCSS=chrome.extension.getURL("css/shanbay.css");
