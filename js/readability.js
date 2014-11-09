@@ -1821,14 +1821,35 @@ var readability = {
     }
     
 };
+chrome.runtime.onMessage.addListener(
+    function(response, sender, sendResponse) {
+        console.log(response);
+        switch(response.method){
+            case "IsArticle":
+                if((window.location.protocol + "//" + window.location.host + "/") !== window.location.href){
+                    if(readability.grabArticle()){
+                        sendResponse({method: "IsArticle",data:true});
+                    }
 
-//readability.init();
-if((window.location.protocol + "//" + window.location.host + "/") !== window.location.href){
-    var port = chrome.runtime.connect({name: "ShanBayHelper"});
-    if(readability.grabArticle()){
-            port.postMessage({
-            method: 'setAction',
-            show: true
-        });
-    }
-}
+                }else{
+                    sendResponse({method: "IsArticle",data:false});
+                }
+                break;
+        }
+            // sendResponse({shanbay: request});
+    });
+// var port = chrome.runtime.connect({name: "ShanBayHelper"});
+// //readability.init();
+// if((window.location.protocol + "//" + window.location.host + "/") !== window.location.href){
+//     if(readability.grabArticle()){
+//             port.postMessage({
+//             method: 'setAction',
+//             show: true
+//         });
+//     }
+// }else{
+//     port.postMessage({
+//     method: 'setAction',
+//     show: false
+// });   
+// }
