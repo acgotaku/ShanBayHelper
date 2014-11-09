@@ -53,6 +53,7 @@ var background=function(){
                                                 var reader = new FileReader();
                                                 reader.onload = function(readerEvt) {
                                                     var binaryString = readerEvt.target.result;
+                                                    // console.log(binaryString);
                                                     var testdata=btoa(binaryString);
                                                     var data={
                                                         "method":"getAudio",

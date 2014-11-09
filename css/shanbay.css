@@ -104,6 +104,14 @@
 	display: inline-block;
 	margin-right: 15px!important;
 }
+#shanbay_popover .icon::before{
+	display: none;
+
+}
+#shanbay_popover .icon::after{
+	display: none;
+
+}
 #shanbay_popover .icon-speak{
 	display: inline-block;
 	width: 16px;
