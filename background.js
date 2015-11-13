@@ -213,10 +213,10 @@ var background=function(){
             });
         },
         getWords:function(port){
-            var parameter = {'url': 'http://www.shanbay.com/bdc/learnings/library/master', 'dataType': 'html', type: 'GET'};
+            var parameter = {'url': 'http://www.shanbay.com/api/v1/bdc/library/master/', 'dataType': 'json', type: 'GET'};
             $.ajax(parameter)
-               .done(function(html, textStatus, jqXHR){
-                    var num=$(".endless_page_link", html).eq($(".endless_page_link", html).length-2).text();
+               .done(function(json, textStatus, jqXHR){
+                    var num=Math.ceil(parseInt(json.data.total)/10);
                     getAllWord(num);
                })
                .fail(function(jqXHR, textStatus, errorThrown) {
@@ -225,19 +225,10 @@ var background=function(){
 
             function getWord(url){
                 return new Promise(function(resolve, reject) {
-                    var parameter = {'url': url, 'dataType': 'html', type: 'GET'};
+                    var parameter = {'url': url, 'dataType': 'json', type: 'GET'};
                     $.ajax(parameter)
-                       .done(function(html, textStatus, jqXHR){
-                           var vocabulary_ids=$("#vocabulary_ids", html).text().trim();
-                           var vocab_ids=vocabulary_ids.substr(0,vocabulary_ids.length-1);
-                           $.ajax({'url': "http://www.shanbay.com/api/v1/bdc/learning/?vocabulary_ids="+vocab_ids+"&_="+(new Date().getTime().toString()), 'dataType': 'json', type: 'GET'})
-                                .done(function(json, textStatus, jqXHR){
-                                    resolve(json);
-                                })
-                                .fail(function(jqXHR, textStatus, errorThrown){
-                                    reject(textStatus);
-                                    console.log(textStatus);
-                                });
+                       .done(function(json, textStatus, jqXHR){
+                            resolve(json);
                        })
                        .fail(function(jqXHR, textStatus, errorThrown) {
                             reject(textStatus);
@@ -250,7 +241,7 @@ var background=function(){
                     all(function(){
                         var array=[];
                         for(var i=1;i<=num;i++){
-                            var url="http://www.shanbay.com/bdc/learnings/library/master?page="+i;
+                            var url="http://www.shanbay.com/api/v1/bdc/library/master/?page="+i;
                              array.push(getWord(url));
                         }
                         console.log(array);
