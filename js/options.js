@@ -18,9 +18,11 @@
             },
             checkWords:function(){
                 var words=JSON.parse(extension.localStorage.getItem("learned"));
-                var length=Object.keys(words).length;
-                console.log(length);
-                $("#count").text(length);
+                if(words){
+                    var length=Object.keys(words).length;
+                    console.log(length);
+                    $("#count").text(length);                    
+                }
             },
             checkUpdateTime:function(){
                 var time=JSON.parse(extension.localStorage.getItem("update"));

@@ -255,8 +255,8 @@ var background=function(){
                 var vocabularys={};
                 for(var i=0;i<words.length;i++){
                     var word=words[i].data;
-                    for(var j=0;j<word.length;j++){
-                        var vocabulary=word[j].content;
+                    for(var j=0;j<word.objects.length;j++){
+                        var vocabulary=word.objects[j].content;
                         vocabularys[vocabulary]=1;
                     }
                 }
