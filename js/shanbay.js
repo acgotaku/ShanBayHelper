@@ -31,14 +31,14 @@ var shanbay=function(){
                                 self.addWord(response.data);
                             }
                             break;
-						case "forget":
-							var iframe=document.getElementById("shanbay_content");
+                        case "forget":
+                            var iframe=document.getElementById("shanbay_content");
                             if(iframe){
                                 self.forget(response.data,iframe.contentDocument);
                             }else{
                                 self.forget(response.data);
                             }
-							break;
+                            break;
                         case "getAudio":
                             if(response.data){
                                 var audio_url=response.data;
@@ -111,9 +111,9 @@ var shanbay=function(){
                             +'<a href="#" class="speak uk">UK<i class="icon icon-speak"></i></a><a href="#" class="speak us">US<i class="icon icon-speak"></i></a></h3>'
                             +'<div class="popover-content">'
                             +'<p>'+data.data.definition.split('\n').join("<br/>")+'</p>'
-							+'<div class="add-btn"><a href="#" class="btn" id="shanbay-forget-btn">忘记了</a>'
-							+'<p class="success hide">已添加到今天的复习计划</p>'
-							+'<a href="#" target="_blank" class="btn hide" id="shanbay-check-btn">查看</a></div>'
+                            +'<div class="add-btn"><a href="#" class="btn" id="shanbay-forget-btn">忘记了</a>'
+                            +'<p class="success hide">已添加到今天的复习计划</p>'
+                            +'<a href="#" target="_blank" class="btn hide" id="shanbay-check-btn">查看</a></div>'
                             +'</div>';
                     }else{
                         html += '<p><span class="word">'+data.data.content+'</span>'
@@ -144,7 +144,7 @@ var shanbay=function(){
                 e.preventDefault();
                 addNewWord(data.data.id);
             });
-			$('#shanbay-forget-btn').click(function(e) {
+            $('#shanbay-forget-btn').click(function(e) {
                 e.preventDefault();
                 forgetWord(data.data.learning_id);
             });
@@ -220,13 +220,12 @@ var shanbay=function(){
                     data: word_id
                 });
             }
-			
-			function forgetWord(learning_id) {
-				port.postMessage({
+            function forgetWord(learning_id) {
+                port.postMessage({
                     method: 'forget',
                     data: learning_id
                 });
-			}
+            }
 
             // function playAudio(audio_url) {
             //     if(audio_url) {
@@ -252,7 +251,7 @@ var shanbay=function(){
               console.log(data);
             };
         },
-		forget:function(data,content){
+        forget:function(data,content){
             content = content ? content : document;
             console.log(data);
             switch(data.msg){

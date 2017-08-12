@@ -184,11 +184,11 @@ var background=function(){
                     console.log(textStatus);
                 });
         },
-		forget:function(learning_id,port){
+        forget:function(learning_id,port){
             var API='http://www.shanbay.com/api/v1/bdc/learning/';
             var parameter = {'url': API + learning_id, 'dataType': 'json', type: 'PUT',contentType: "application/json; charset=utf-8",data:JSON.stringify({
-                forget: "1"
-                })};
+               forget: "1"
+                 })};
             $.ajax(parameter)
                .done(function(json, textStatus, jqXHR){
                     var data={
