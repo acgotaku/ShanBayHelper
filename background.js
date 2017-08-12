@@ -43,11 +43,11 @@ var background=function(){
                                             self.addNewWord(request.data,port);
                                         }
                                         break;
-									case 'forget':
-										if(request.data){
+                                    case 'forget':
+                                        if(request.data){
                                             self.forget(request.data,port);
                                         }
-										break;
+                                        break;
                                     case 'getAudio':
                                         if(request.data){
                                             var oReq = new XMLHttpRequest();
