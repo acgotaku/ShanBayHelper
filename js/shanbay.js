@@ -31,6 +31,14 @@ var shanbay=function(){
                                 self.addWord(response.data);
                             }
                             break;
+						case "forget":
+							var iframe=document.getElementById("shanbay_content");
+                            if(iframe){
+                                self.forget(response.data,iframe.contentDocument);
+                            }else{
+                                self.forget(response.data);
+                            }
+							break;
                         case "getAudio":
                             if(response.data){
                                 var audio_url=response.data;
@@ -103,7 +111,10 @@ var shanbay=function(){
                             +'<a href="#" class="speak uk">UK<i class="icon icon-speak"></i></a><a href="#" class="speak us">US<i class="icon icon-speak"></i></a></h3>'
                             +'<div class="popover-content">'
                             +'<p>'+data.data.definition.split('\n').join("<br/>")+'</p>'
-                            +'</div>';                  
+							+'<div class="add-btn"><a href="#" class="btn" id="shanbay-forget-btn">忘记了</a>'
+							+'<p class="success hide">已添加到今天的复习计划</p>'
+							+'<a href="#" target="_blank" class="btn hide" id="shanbay-check-btn">查看</a></div>'
+                            +'</div>';
                     }else{
                         html += '<p><span class="word">'+data.data.content+'</span>'
                             +'<small class="pronunciation">'+(data.data.pron.length ? ' ['+data.data.pron+'] ': '')+'</small></p>'
@@ -133,9 +144,13 @@ var shanbay=function(){
                 e.preventDefault();
                 addNewWord(data.data.id);
             });
+			$('#shanbay-forget-btn').click(function(e) {
+                e.preventDefault();
+                forgetWord(data.data.learning_id);
+            });
             $('#shanbay_popover .speak.us',content).click(function(e) {
                 e.preventDefault();
-                var audio_url = 'http://media.shanbay.com/audio/us/' + data.data.content + '.mp3';
+                var audio_url = data.data.audio_addresses.us[0];//'http://media.shanbay.com/audio/us/' + data.data.content + '.mp3';
                 port.postMessage({
                     method: 'getAudio',
                     data: audio_url
@@ -145,7 +160,7 @@ var shanbay=function(){
 
             $('#shanbay_popover .speak.uk',content).click(function(e) {
                 e.preventDefault();
-                var audio_url = 'http://media.shanbay.com/audio/uk/' + data.data.content + '.mp3';
+                var audio_url = data.data.audio_addresses.uk[0];//'http://media.shanbay.com/audio/uk/' + data.data.content + '.mp3';
                 port.postMessage({
                     method: 'getAudio',
                     data: audio_url
@@ -205,6 +220,13 @@ var shanbay=function(){
                     data: word_id
                 });
             }
+			
+			function forgetWord(learning_id) {
+				port.postMessage({
+                    method: 'forget',
+                    data: learning_id
+                });
+			}
 
             // function playAudio(audio_url) {
             //     if(audio_url) {
@@ -225,6 +247,22 @@ var shanbay=function(){
                     break;
               case "ERROR":
                 $('#shanbay_popover .success',content).text('添加失败，请重试。').removeClass().addClass('failed');
+                break;
+              default:
+              console.log(data);
+            };
+        },
+		forget:function(data,content){
+            content = content ? content : document;
+            console.log(data);
+            switch(data.msg){
+              case "SUCCESS":
+                  $('#shanbay-forget-btn',content).addClass('hide');
+                  $('#shanbay_popover .success, #shanbay-check-btn',content).removeClass('hide');
+                  $('#shanbay-check-btn',content).attr('href', 'http://www.shanbay.com/review/learning/' + data.data.id);
+                    break;
+              case "ERROR":
+                $('#shanbay_popover .success',content).text('操作失败，请重试。').removeClass().addClass('failed');
                 break;
               default:
               console.log(data);

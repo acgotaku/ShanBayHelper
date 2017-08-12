@@ -43,6 +43,11 @@ var background=function(){
                                             self.addNewWord(request.data,port);
                                         }
                                         break;
+									case 'forget':
+										if(request.data){
+                                            self.forget(request.data,port);
+                                        }
+										break;
                                     case 'getAudio':
                                         if(request.data){
                                             var oReq = new XMLHttpRequest();
@@ -164,13 +169,30 @@ var background=function(){
         addNewWord:function(word_id,port){
             var API='http://www.shanbay.com/api/v1/bdc/learning/';
             var parameter = {'url': API, 'dataType': 'json', type: 'POST',contentType: "application/json; charset=utf-8",data:JSON.stringify({
-                content_type: "vocabulary",
                 id: word_id
                 })};
             $.ajax(parameter)
                .done(function(json, textStatus, jqXHR){
                     var data={
                         "method":"addWord",
+                        "data":json
+                    };
+                    console.log(data);
+                    port.postMessage(data);
+               })
+               .fail(function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                });
+        },
+		forget:function(learning_id,port){
+            var API='http://www.shanbay.com/api/v1/bdc/learning/';
+            var parameter = {'url': API + learning_id, 'dataType': 'json', type: 'PUT',contentType: "application/json; charset=utf-8",data:JSON.stringify({
+                forget: "1"
+                })};
+            $.ajax(parameter)
+               .done(function(json, textStatus, jqXHR){
+                    var data={
+                        "method":"forget",
                         "data":json
                     };
                     console.log(data);
